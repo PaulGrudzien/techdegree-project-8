@@ -1,0 +1,25 @@
+extends layout.pug
+
+block title
+    title New Book
+
+block content 
+    h1 New Book
+    form
+        p
+            label(for="title") Title
+            input(name="title", type="text", id="title")
+        p
+            label(for="author") Title
+            input(name="author", type="text", id="author")
+        p
+            label(for="genre") Title
+            input(name="genre", type="text", id="genre")
+        p
+            label(for="year") Title
+            input(name="year", type="text", id="year")
+        p
+            input(type="submit", value="Update Book")
+        p
+            a(class="button", href="/") Cancel
+
