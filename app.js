@@ -1,12 +1,13 @@
 const db = require('./db.js');
 const express = require("express")
+const bodyParser = require('body-parser')
 
 const app = express()
 const {Book} = db.models;
 
 app.set('view engine', 'pug');
 app.use('/static', express.static('public'));
-express.static.mime.define({'text/css': ['css']});
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // redirecting / to /books
 app.get('/', (req, res) => {
@@ -33,7 +34,21 @@ app.get('/books/new', (req, res) => {
 });
 
 app.post('/books/new', (req, res) => {
-    res.redirect('/books')
+    (async () => {
+        let newBook;
+        try {
+            newBook = await Book.create(req.body);
+            res.redirect('/books')
+        } catch (error) {
+            if(error.name === "SequelizeValidationError") {
+                newBook = await Book.build(req.body);
+                res.locals={newBook, errors: error.errors}
+                res.render("new-book")
+            } else {
+                next(error)
+            }
+        }
+    })();
 });
 
 // routes for /books/:id
@@ -51,13 +66,34 @@ app.get('/books/:id', (req, res) => {
     })();
 });
 
-app.post('/books/:id', (req, res) => {
-    res.redirect('/books')
+app.post('/books/:id', (req, res, next) => {
+    (async () => {
+        const book = await Book.findByPk(req.params.id);
+        try {
+            await book.update(req.body);
+            res.redirect('/books')
+        } catch (error) {
+            if(error.name === "SequelizeValidationError") {
+                res.locals={book:req.body, errors: error.errors}
+                res.render("update-book")
+            } else {
+                next(error)
+            }
+        }
+    })();
 });
 
 // route for /books/:id/delete
 app.post('/books/:id/delete', (req, res) => {
-    res.redirect('/books')
+    (async () => {
+        try {
+            const book = await Book.findByPk(req.params.id);
+            await book.destroy();
+            res.redirect('/books')
+          } catch(error) {
+            next(error)
+          }
+    })();
 });
 
 // route for inexisting page

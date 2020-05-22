@@ -5,7 +5,13 @@ block title
 
 block content 
     h1 Update Book
-    form
+    form(action="", method="post")
+        if errors
+            h2(class="error") Oooops!
+            ul(class="error")
+                each error in errors
+                    li= error.message
+                    
         p
             label(for="title") Title
             input(name="title", type="text", id="title", value=book.title)
