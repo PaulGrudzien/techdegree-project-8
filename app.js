@@ -18,9 +18,15 @@ app.get('/', (req, res) => {
 app.get('/books', (req, res, next) => {
     (async () => {
       try {
-        const booksData = await Book.findAll();
+        const booksData = await Book.findAll({
+            order: [
+                ['title', 'ASC'],
+                ['author', 'ASC'],
+                ['year', 'ASC'],
+            ]
+        });
         const books = booksData.map(book => book.toJSON());
-        res.locals = { books };
+        res.locals = { books, idHighlighted:req.query.idHighlighted };
         res.render("index");
       } catch(error) {
         next(error)
@@ -38,7 +44,7 @@ app.post('/books/new', (req, res) => {
         let newBook;
         try {
             newBook = await Book.create(req.body);
-            res.redirect('/books')
+            res.redirect(`/books?idHighlighted=${newBook.id}`)
         } catch (error) {
             if(error.name === "SequelizeValidationError") {
                 newBook = await Book.build(req.body);
@@ -71,7 +77,7 @@ app.post('/books/:id', (req, res, next) => {
         const book = await Book.findByPk(req.params.id);
         try {
             await book.update(req.body);
-            res.redirect('/books')
+            res.redirect(`/books?idHighlighted=${req.params.id}`)
         } catch (error) {
             if(error.name === "SequelizeValidationError") {
                 res.locals={book:req.body, errors: error.errors}

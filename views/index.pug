@@ -4,24 +4,31 @@ block title
     title Books
 
 block content 
-    h1 Books
+    h1 
+        a(href='/books/') Books
   
     p
         a(class="button", href="/books/new") Create New Book
     
-    table
-        thead
-            tr
-                th Title
-                th Author
-                th Genre
-                th Year
-        tbody
-            each book in books
+    if books.length === 0
+        p There is no results
+    
+    else
+        table
+            thead
                 tr
-                    td
-                        a(href='/books/'+book.id)= book.title
-                    td= book.author
-                    td= book.genre
-                    td= book.year
-
+                    th Title
+                    th Author
+                    th Genre
+                    th Year
+            tbody
+                each book in books
+                    tr(class=(idHighlighted == book.id)?"highlighted":"")
+                        td
+                            a(href='/books/'+book.id)= book.title
+                        td= book.author
+                        td= book.genre
+                        td= book.year
+    div.pagination
+    
+    script(src="../static/scripts/script.js")

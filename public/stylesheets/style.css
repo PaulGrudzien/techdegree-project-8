@@ -77,12 +77,23 @@ input[type=submit].valid:hover {
   background-color: #008080;
 }
 
+/* buttons for pagination */
+
+a.pagination {
+    width: 50px;
+    margin: 3px;
+}
+
+a.current-page {
+    border: 2px solid black;
+}
+
 /************************
 * PARAGRAPHS and TITLES *
 *************************/
 
 p {
-  margin: 20px auto;
+  margin: 10px auto;
 }
 
 ul {
@@ -93,8 +104,9 @@ ul {
 }
 
 h1 {
-  font-size: 72px;
+  font-size: 54px;
   font-family: "Special Elite", serif;
+  margin-bottom: 0px;
 }
 
 h2 {
@@ -104,6 +116,10 @@ h2 {
 
 .error {
   color: rgb(236, 15, 15);
+}
+
+div.pagination {
+    text-align: center;
 }
 
 /********
