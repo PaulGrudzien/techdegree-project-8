@@ -1,8 +1,9 @@
 const db = require('./db.js');
-const express = require("express")
-const bodyParser = require('body-parser')
+const express = require("express");
+const bodyParser = require('body-parser');
+const {Op} = require("sequelize");
 
-const app = express()
+const app = express();
 const {Book} = db.models;
 
 app.set('view engine', 'pug');
@@ -18,13 +19,24 @@ app.get('/', (req, res) => {
 app.get('/books', (req, res, next) => {
     (async () => {
       try {
-        const booksData = await Book.findAll({
+        const query = {
             order: [
                 ['title', 'ASC'],
                 ['author', 'ASC'],
                 ['year', 'ASC'],
             ]
-        });
+        };
+        if (req.query.search) {
+            query.where = {
+                [Op.or]: [
+                    { title: { [Op.like]: `%${req.query.search}%` } },
+                    { author: { [Op.like]: `%${req.query.search}%` } },
+                    { genre: { [Op.like]: `%${req.query.search}%` } },
+                    { year: req.query.search }
+                ]
+            };
+        };
+        const booksData = await Book.findAll(query);
         const books = booksData.map(book => book.toJSON());
         res.locals = { books, idHighlighted:req.query.idHighlighted };
         res.render("index");

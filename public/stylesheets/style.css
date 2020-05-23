@@ -88,6 +88,28 @@ a.current-page {
     border: 2px solid black;
 }
 
+/*************
+* SEARCH DIV *
+**************/
+
+form.search {
+    display: inline;
+}
+
+.search input[type=text] {
+    float: right;
+    margin: 2px;
+    border: 2px solid #FF8C00;
+    height: 100%;
+}
+
+.search input[type=submit] {
+    width: 100px;
+    float: right;
+    margin: 3px;
+    height: 100%;
+}
+
 /************************
 * PARAGRAPHS and TITLES *
 *************************/
