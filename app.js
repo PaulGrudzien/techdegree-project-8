@@ -70,7 +70,7 @@ app.post('/books/new', (req, res) => {
 });
 
 // routes for /books/:id
-app.get('/books/:id', (req, res) => {
+app.get('/books/:id', (req, res, next) => {
     (async () => {
         const bookData = await Book.findByPk(req.params.id);
         if (bookData) {
@@ -78,8 +78,10 @@ app.get('/books/:id', (req, res) => {
             res.locals = { book };
             res.render("update-book");
         } else {
-            console.error(`Page not found (${req.originalUrl})`)
-            res.render("page-not-found");
+            const error = new Error("Server Error");
+            error.status = 500
+            error.message = `They are no book with the id ${req.params.id}`;
+            next(error)
         }
     })();
 });
@@ -95,6 +97,7 @@ app.post('/books/:id', (req, res, next) => {
                 res.locals={book:req.body, errors: error.errors}
                 res.render("update-book")
             } else {
+                error.status = 500
                 next(error)
             }
         }
@@ -109,6 +112,7 @@ app.post('/books/:id/delete', (req, res) => {
             await book.destroy();
             res.redirect('/books')
           } catch(error) {
+            error.status = 500
             next(error)
           }
     })();
